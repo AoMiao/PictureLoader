@@ -22,6 +22,22 @@ public class ImageReduce {//图片压缩功能
     }
 
     public int calculateSample(BitmapFactory.Options options,int reqWidth,int reqHeight){
-        return 0;
+        int sampleSize = 0;//计算采样值
+        if(reqHeight==0||reqWidth==0){
+            return 1;
+        }
+
+        final int width = options.outWidth;
+        final int height = options.outHeight;
+
+        if(width>reqWidth||height>reqHeight){
+            final int halfWidth = width/2;
+            final int halfHeight = height/2;
+            while ((halfWidth/sampleSize) >=reqWidth
+                    && (halfHeight/sampleSize) >=reqHeight){
+                sampleSize *=2;
+            }
+        }
+        return sampleSize;
     }
 }
