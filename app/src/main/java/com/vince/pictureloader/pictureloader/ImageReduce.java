@@ -4,6 +4,8 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import java.io.FileDescriptor;
+
 /**
  * Created by Administrator on 2017/4/20.
  */
@@ -21,8 +23,17 @@ public class ImageReduce {//图片压缩功能
         return BitmapFactory.decodeResource(resources,id,options);
     }
 
+    public Bitmap reduceBitmapFormFileDescriptor(FileDescriptor fileDescriptor,int reqWidth,int reqHeight){
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFileDescriptor(fileDescriptor,null,options);
+        options.inSampleSize = calculateSample(options,reqWidth,reqHeight);
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFileDescriptor(fileDescriptor,null,options);
+    }
+
     public int calculateSample(BitmapFactory.Options options,int reqWidth,int reqHeight){
-        int sampleSize = 0;//计算采样值
+        int sampleSize = 1;//计算采样值
         if(reqHeight==0||reqWidth==0){
             return 1;
         }
@@ -33,8 +44,8 @@ public class ImageReduce {//图片压缩功能
         if(width>reqWidth||height>reqHeight){
             final int halfWidth = width/2;
             final int halfHeight = height/2;
-            while ((halfWidth/sampleSize) >=reqWidth
-                    && (halfHeight/sampleSize) >=reqHeight){
+            while ((halfWidth / sampleSize) >=reqWidth
+                    && (halfHeight / sampleSize) >=reqHeight){
                 sampleSize *=2;
             }
         }
